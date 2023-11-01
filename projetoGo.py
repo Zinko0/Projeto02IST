@@ -98,7 +98,7 @@ def ordena_intersecoes(t):
     return t
 
     
-def cria_pedra_branca():  #NOTA IMPORTANTE: ver se o cria_pedra_branca
+def cria_pedra_branca():  
     '''cria_pedra_branca: {} → pedra
 
     cria_pedra_branca() devolve uma pedra pertencente ao jogador branco.
@@ -144,7 +144,7 @@ def eh_pedra_preta(p):
     '''
     return p == 'X'
 
-'''Função extra''' #ver se posso fazer isto assim
+'''Função extra''' 
 def eh_pedra_neutra(p):
     '''eh_pedra_preta: pedra → booleano
 
@@ -158,7 +158,7 @@ def pedras_iguais(p1,p2):
         (eh_pedra_preta(p1) and eh_pedra_preta(p2)) or\
         (eh_pedra_neutra(p1) and eh_pedra_neutra(p2))
 
-def pedra_para_str(p): #ver se é preciso forçar o cria_pedra a ser str
+def pedra_para_str(p): 
     '''pedra_para_str: pedra → str
 
     pedra_para_str(p) devolve a cadeia de caracteres que representa o jogador dono
@@ -182,7 +182,7 @@ def eh_pedra_jogador(p):
         return True
     return False
 
-def cria_goban_vazio(n): #ver comentários
+def cria_goban_vazio(n): 
     '''cria_goban_vazio: int → goban
 
     cria_goban_vazio(n) devolve um goban de tamanho nxn, sem interseções ocupadas. 
@@ -216,11 +216,11 @@ def cria_goban(n, ib, ip):
         for branca in ib: 
             if(eh_intersecao_valida(goban,branca) and branca not in ivistas):
                 goban = coloca_pedra(goban,branca,cria_pedra_branca())
-                ivistas += branca #CUIDADO PODE DAR ERRADO
+                ivistas += branca
         for preta in ip:
             if(eh_intersecao_valida(goban,preta) and preta not in ivistas):
                 goban = coloca_pedra(goban,preta,cria_pedra_preta())    
-                ivistas += preta #CUIDADO PODE DAR ERRADO
+                ivistas += preta 
             else:
                 raise ValueError('cria_goban: argumentos invalidos')
         return goban
@@ -311,12 +311,12 @@ def remove_cadeia(g, t):
     nas interseções to tuplo t, e devolve o próprio goban.
     '''
     for intersecao in t:
-        remove_pedra(g, intersecao)  #testar para ver se funciona 
+        remove_pedra(g, intersecao)  
     return g
 
 
  
-def eh_goban(arg): #falta comentar
+def eh_goban(arg): 
     '''eh_goban: universal → booleano
 
     eh_goban(arg) devolve True caso o seu argumento seja um TAD goban e False
@@ -354,7 +354,7 @@ def gobans_iguais(g1, g2):
     gobans_iguais(g1, g2) devolve True apenas se g1 e g2 forem gobans e forem
     iguais.
     '''
-    if(eh_goban(g1) and eh_goban(g2)): #ver se é preciso fazer a copia
+    if(eh_goban(g1) and eh_goban(g2)): 
         return cria_copia_goban(g1) == cria_copia_goban(g2)
     return False
 
@@ -393,7 +393,7 @@ def obtem_territorios(g):
     leitura da primeira interseção do território.
     '''
     territorios = ()
-    intersecoes = todas_as_intersecoes(g)  #é uma lista
+    intersecoes = todas_as_intersecoes(g)  
 
     for i in intersecoes:
         if(obtem_pedra(g,i) == cria_pedra_neutra()):
@@ -401,7 +401,7 @@ def obtem_territorios(g):
             for j in territorios[-1]:
                 intersecoes.remove(j)
 
-    return territorios   #supostamente já vem ordenado
+    return territorios   
         
 def obtem_adjacentes_diferentes(g, t):
     '''obtem_adjacentes_diferentes: goban x tuplo → tuplo
@@ -412,7 +412,7 @@ def obtem_adjacentes_diferentes(g, t):
     (a) livres, se as interseções do tuplo t estiverem ocupadas por pedras de jogador;
     (b) ocupadas por pedras de qualquer jogador, se as interseções do tuplo t estiverem livres
     '''
-    #supondo que o t já é o obtem_cadeia
+    
     if (obtem_pedra(g,t[0]) == cria_pedra_preta() or \
         obtem_pedra(g,t[0]) == cria_pedra_branca()):   #caso (a)
         liberdades = ()
@@ -422,7 +422,7 @@ def obtem_adjacentes_diferentes(g, t):
                     liberdades += (adjacente,)
         return ordena_intersecoes(liberdades)
     
-    elif(obtem_pedra(g,t[0]) == cria_pedra_neutra()): #case (b)
+    elif(obtem_pedra(g,t[0]) == cria_pedra_neutra()): #caso (b)
         fronteiras = ()
         for intersecao in t:
             for adjacente in obtem_intersecoes_adjacentes(intersecao,obtem_ultima_intersecao(g)):
@@ -438,10 +438,11 @@ def jogada(g, i, p):
     p na interseção i e remove todas as pedras do jogador contrário pertencentes a
     cadeias adjacentes a i sem liberdades, devolvendo o próprio goban.
     '''
-    #a jogada pode nao ser legal ???
+    
 
     coloca_pedra(g,i,p)
-
+    #verifica a todas as pedras adversarias adjacentes se elas possuem liberdades
+    # caso não tenham, são removidas 
     if(p == cria_pedra_branca()):
         for adjacente in obtem_intersecoes_adjacentes(i,obtem_ultima_intersecao(g)):
             if (obtem_pedra(g,adjacente) == cria_pedra_preta() \
@@ -449,6 +450,7 @@ def jogada(g, i, p):
                 
                 remove_cadeia(g,obtem_cadeia(g,adjacente))
     
+    #exatamente o mesmo mas para as pedras pretas
     if(p == cria_pedra_preta()):
         for adjacente in obtem_intersecoes_adjacentes(i,obtem_ultima_intersecao(g)):
             if (obtem_pedra(g,adjacente) == cria_pedra_branca() \
@@ -481,7 +483,8 @@ def calcula_pontos(g):
     e devolve o tuplo de dois inteiros com as pontuações 
     dos jogadores branco e preto, respetivamente.
     '''
-    pontos_b = obtem_pedras_jogadores(g)[0]   #isto quebra a abstraçao ???
+    #guardo imediatamente os pontos dados pelas pedras em jogo
+    pontos_b = obtem_pedras_jogadores(g)[0]   
     pontos_p = obtem_pedras_jogadores(g)[-1]
 
     if(pontos_b == 0 and pontos_p == 0): #caso especial
@@ -490,7 +493,9 @@ def calcula_pontos(g):
 
     for territorio in obtem_territorios(g):
         pedras_fronteira = []
-
+        #crio uma lista das pedras que fazem fronteira 
+        #e depois verifico se são todas iguais
+        #se forem, os pontos do território (len(território)) são adicionados ao jogador respetivo
         for intersecao in obtem_adjacentes_diferentes(g,territorio):
             pedras_fronteira += [obtem_pedra(g,intersecao),]
 
@@ -578,48 +583,69 @@ def go(n, tb, tn):
     A função gera um ValueError com a mensagem 'go: argumentos invalidos' 
     caso os seus argumentos não sejam válidos.
     '''
+    
     try:
-        g = cria_goban(n,tb,tn)
+
+        brancas= ()
+        pretas = ()
+        for i in tb:
+            brancas += (intersecao_para_str(i),)
+
+        for j in tn:
+            pretas += (intersecao_para_str(j),)
+
+        g = cria_goban(n,brancas,pretas)
+        
     except ValueError:
         raise ValueError('go: argumentos invalidos')
     
     alterna = 0
     passou = 0
 
-    tabuleiro = cria_copia_goban(g)
-    nao_repete = cria_copia_goban(cria_goban_vazio(n))
+    g_copia = cria_copia_goban(g)
+    t_anterior = cria_copia_goban(g)
     
-    while(passou != 2):
+    while(passou != 2): #caso os dois passem a vez de seguida, o ciclo acaba
+            
         
-    
-
         if(alterna % 2 == 0):
             p = cria_pedra_preta()
         else:
             p = cria_pedra_branca()
-
-        if(alterna % 3 == 0):
-            nao_repete = tabuleiro
-            
-
+        
+         #sempre que for a vez das pretas o passou volta a ser 0
         if(p == cria_pedra_preta()):
             passou = 0
+            
+            
 
-        print("Branco (O) tem", calcula_pontos(tabuleiro)[0],"pontos")
-        print("Preto (X) tem", calcula_pontos(tabuleiro)[-1],"pontos")
+        print("Branco (O) tem", calcula_pontos(g)[0],"pontos")
+        print("Preto (X) tem", calcula_pontos(g)[-1],"pontos")
         
-        print(goban_para_str(tabuleiro))
+        print(goban_para_str(g))
 
+        #verifica se o jogador passou e regista
+        g_copia = cria_copia_goban(g)
+        
+        #verifica se a jogada feita faz com que o tabuleiro seja igual
+        #ao tabuleiro da jogada anterior
+        #se forem iguais, o tabuleiro volta ao estado anterior da jogada,
+        #pede ao jogador para escolher outra interseção
+        
+        while(g == g_copia): 
+            if(not turno_jogador(g,p,t_anterior)):
+                passou += 1
 
-        if(not turno_jogador(tabuleiro,p,nao_repete)):
-            passou += 1
+            if(gobans_iguais(g,t_anterior)):
+                g = g_copia
 
+        t_anterior = g_copia
         alterna += 1
-
+    
 
     
-    return calcula_pontos(tabuleiro)[0] >= calcula_pontos(tabuleiro)[-1]
+    return calcula_pontos(g)[0] >= calcula_pontos(g)[-1]
      
 
     
-go(9,(),())
+
