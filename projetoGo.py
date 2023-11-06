@@ -1,4 +1,3 @@
-
 def cria_intersecao(col,lin):
     '''cria_intersecao: str x int → intersecao
 
@@ -645,7 +644,3 @@ def go(n, tb, tn):
 
     
     return calcula_pontos(g)[0] >= calcula_pontos(g)[-1]
-     
-
-    
-
